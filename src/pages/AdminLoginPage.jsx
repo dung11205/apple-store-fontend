@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { loginUser } from "../api/authApi";
 import { saveAuth } from "../utils/auth";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-export default function LoginPage() {
+export default function AdminLoginPage() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -16,24 +16,31 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       const res = await loginUser(form);
-      const userRole = res.user?.role || "user";
 
-      saveAuth(res.access_token, userRole);
+      // ✅ Log để kiểm tra cấu trúc trả về
+      console.log("Login Response:", res);
 
-      // Nếu là admin → về dashboard admin
-      if (userRole === "admin") navigate("/admin/dashboard");
-      else navigate("/");
+      // ✅ Kiểm tra tất cả khả năng (res.user.role, res.role, fallback)
+      const userRole =
+        res.user?.role || res.role || res.data?.role || "user";
+
+      if (userRole !== "admin") {
+        setError("Bạn không có quyền truy cập trang quản trị");
+        return;
+      }
+
+      saveAuth(res.access_token || res.token, userRole);
+      navigate("/admin/dashboard");
     } catch (err) {
+      console.error(err);
       setError(err.response?.data?.message || "Đăng nhập thất bại");
     }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-white to-gray-100 text-gray-900">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 text-gray-900">
       <div className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-xl border border-gray-200">
-        <h2 className="text-2xl font-semibold text-center mb-6">
-          <span className="font-bold text-black">Apple</span> Store
-        </h2>
+        <h2 className="text-2xl font-semibold text-center mb-6">Admin Login</h2>
 
         {error && <p className="text-red-500 text-center mb-3">{error}</p>}
 
@@ -61,13 +68,6 @@ export default function LoginPage() {
             Đăng nhập
           </button>
         </form>
-
-        <p className="text-center text-sm text-gray-600 mt-4">
-          Chưa có tài khoản?{" "}
-          <Link to="/register" className="text-black font-medium hover:underline">
-            Đăng ký ngay
-          </Link>
-        </p>
       </div>
     </div>
   );
