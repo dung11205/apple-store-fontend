@@ -4,7 +4,7 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ProductList from "./pages/ProductList";
-import DashboardAdmin from "./pages/DashboardAdmin";
+import DashboardAdmin from "./pages/admin/DashboardAdmin";
 import AdminLoginPage from "./pages/AdminLoginPage";
 import AdminRoute from "./components/AdminRoute";
 
