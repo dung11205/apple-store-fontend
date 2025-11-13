@@ -1,15 +1,19 @@
-// HomePage.jsx - Giữ nguyên placeholder, nhưng thêm một chút content để giống Apple Store hơn (hero section đơn giản)
-import Navbar from "../components/Navbar"; // Giả sử import Navbar nếu dùng ở App.jsx
+// src/pages/HomePage.jsx
+import ProductList from "./ProductList";
+import Navbar from "../components/Navbar";
 
 const HomePage = () => {
   return (
-    <div className="min-h-screen bg-white">
-      {/* Navbar sẽ được render ở App.jsx */}
-      <main className="pt-16"> {/* Offset cho fixed navbar */}
-        <div className="w-full text-center py-24 text-5xl font-bold text-gray-900">
-          
+    <div className="min-h-screen bg-gray-50">
+      {/* Navbar cố định */}
+      <Navbar />
+
+      {/* Product Section */}
+      <main className="pt-[5.5rem]"> {/* pt tương ứng chiều cao Navbar + 1cm (~5.5rem) */}
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          {/* Product Grid */}
+          <ProductList />
         </div>
-   
       </main>
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FiX, FiMail, FiLock, FiUserPlus, FiUser } from "react-icons/fi";
 import { loginUser, registerUser } from "../api/authApi";
 import { saveAuth, isAuthenticated, getRole } from "../utils/auth";
@@ -11,11 +11,16 @@ const AuthModal = ({ isOpen, onClose, initialTab = "login" }) => {
   const [loading, setLoading] = useState(false);
 
   const isCurrentAdmin = isAuthenticated() && getRole() === "admin";
+  const loginEmailRef = useRef(null);
+  const registerNameRef = useRef(null);
 
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => {
-        const firstInput = document.querySelector('input');
+        // Focus vào input đầu tiên của tab hiện tại
+        const firstInput = activeTab === "login" 
+          ? loginEmailRef.current 
+          : registerNameRef.current;
         firstInput?.focus();
       }, 200);
     }
@@ -28,6 +33,62 @@ const AuthModal = ({ isOpen, onClose, initialTab = "login" }) => {
 
   const iconClass =
     "absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-black transition-colors";
+
+  const validateEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  const handleLoginSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateEmail(loginForm.email)) {
+      setError("Email không hợp lệ");
+      return;
+    }
+    if (loginForm.password.length < 6) {
+      setError("Mật khẩu phải ít nhất 6 ký tự");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    try {
+      const res = await loginUser(loginForm);
+      const userRole = res.user?.role || "user";
+      saveAuth(res.access_token, userRole);
+      onClose();
+      window.location.reload();
+    } catch (err) {
+      setError(err.message || "Đăng nhập thất bại");
+    }
+    setLoading(false);
+  };
+
+  const handleRegisterSubmit = async (e) => {
+    e.preventDefault();
+    if (registerForm.name.trim().length < 2) {
+      setError("Tên phải ít nhất 2 ký tự");
+      return;
+    }
+    if (!validateEmail(registerForm.email)) {
+      setError("Email không hợp lệ");
+      return;
+    }
+    if (registerForm.password.length < 6) {
+      setError("Mật khẩu phải ít nhất 6 ký tự");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    try {
+      const data = isCurrentAdmin ? registerForm : { ...registerForm, role: "user" };
+      await registerUser(data);
+      setActiveTab("login");
+      setError("Đăng ký thành công! Vui lòng đăng nhập.");
+      setRegisterForm({ name: "", email: "", password: "", role: "user" }); // Reset form
+    } catch (err) {
+      setError(err.message || "Đăng ký thất bại");
+    }
+    setLoading(false);
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md bg-black/40 animate-fadeIn">
@@ -43,6 +104,7 @@ const AuthModal = ({ isOpen, onClose, initialTab = "login" }) => {
           <button
             onClick={onClose}
             className="p-2 rounded-full hover:bg-gray-100 transition"
+            aria-label="Đóng modal"
           >
             <FiX size={20} />
           </button>
@@ -53,6 +115,7 @@ const AuthModal = ({ isOpen, onClose, initialTab = "login" }) => {
           {["login", "register"].map((tab) => (
             <button
               key={tab}
+              type="button"
               onClick={() => setActiveTab(tab)}
               className={`flex-1 py-3 text-sm font-semibold capitalize transition-all ${
                 activeTab === tab
@@ -67,35 +130,24 @@ const AuthModal = ({ isOpen, onClose, initialTab = "login" }) => {
 
         {/* BODY */}
         <div className="p-6 space-y-4">
-          {error && <p className="text-red-500 text-center text-sm">{error}</p>}
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-xl">
+              <p className="text-red-600 text-sm text-center">{error}</p>
+            </div>
+          )}
 
           {activeTab === "login" ? (
             /* LOGIN FORM */
-            <form
-              onSubmit={async (e) => {
-                e.preventDefault();
-                setLoading(true);
-                setError("");
-                try {
-                  const res = await loginUser(loginForm);
-                  const userRole = res.user?.role || "user";
-                  saveAuth(res.access_token, userRole);
-                  onClose();
-                  window.location.reload();
-                } catch (err) {
-                  setError(err.message || "Đăng nhập thất bại");
-                }
-                setLoading(false);
-              }}
-              className="space-y-4"
-            >
+            <form onSubmit={handleLoginSubmit} className="space-y-4">
               <div className="relative group">
                 <FiMail className={iconClass} />
                 <input
+                  ref={loginEmailRef}
                   name="email"
                   placeholder="Email"
                   type="email"
                   required
+                  value={loginForm.email}
                   className={inputClass}
                   onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
                 />
@@ -108,6 +160,7 @@ const AuthModal = ({ isOpen, onClose, initialTab = "login" }) => {
                   placeholder="Mật khẩu"
                   type="password"
                   required
+                  value={loginForm.password}
                   className={inputClass}
                   onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
                 />
@@ -116,35 +169,22 @@ const AuthModal = ({ isOpen, onClose, initialTab = "login" }) => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 bg-black text-white rounded-xl font-medium hover:bg-gray-800 transition active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-3 bg-black text-white rounded-xl font-medium hover:bg-gray-800 transition active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {loading ? "Đang xử lý..." : <> <FiUser /> Đăng nhập </>}
               </button>
             </form>
           ) : (
             /* REGISTER FORM */
-            <form
-              onSubmit={async (e) => {
-                e.preventDefault();
-                setLoading(true);
-                try {
-                  const data = isCurrentAdmin ? registerForm : { ...registerForm, role: "user" };
-                  await registerUser(data);
-                  setActiveTab("login");
-                  setError("Đăng ký thành công! Đăng nhập ngay nhé.");
-                } catch (err) {
-                  setError(err.message || "Đăng ký thất bại");
-                }
-                setLoading(false);
-              }}
-              className="space-y-4"
-            >
+            <form onSubmit={handleRegisterSubmit} className="space-y-4">
               <div className="relative group">
                 <FiUserPlus className={iconClass} />
                 <input
+                  ref={registerNameRef}
                   name="name"
                   placeholder="Họ và tên"
                   required
+                  value={registerForm.name}
                   className={inputClass}
                   onChange={(e) => setRegisterForm({ ...registerForm, name: e.target.value })}
                 />
@@ -156,8 +196,9 @@ const AuthModal = ({ isOpen, onClose, initialTab = "login" }) => {
                   name="email"
                   type="email"
                   placeholder="Email"
-                  className={inputClass}
                   required
+                  value={registerForm.email}
+                  className={inputClass}
                   onChange={(e) => setRegisterForm({ ...registerForm, email: e.target.value })}
                 />
               </div>
@@ -168,26 +209,30 @@ const AuthModal = ({ isOpen, onClose, initialTab = "login" }) => {
                   name="password"
                   type="password"
                   placeholder="Mật khẩu"
-                  className={inputClass}
                   required
+                  value={registerForm.password}
+                  className={inputClass}
                   onChange={(e) => setRegisterForm({ ...registerForm, password: e.target.value })}
                 />
               </div>
 
               {isCurrentAdmin && (
-                <select
-                  className={`${inputClass} bg-white`}
-                  onChange={(e) => setRegisterForm({ ...registerForm, role: e.target.value })}
-                >
-                  <option value="user">User</option>
-                  <option value="admin">Admin</option>
-                </select>
+                <div className="relative group">
+                  <select
+                    className={`${inputClass} bg-white pr-11`}
+                    value={registerForm.role}
+                    onChange={(e) => setRegisterForm({ ...registerForm, role: e.target.value })}
+                  >
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
               )}
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 bg-black text-white rounded-xl hover:bg-gray-800 transition active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-3 bg-black text-white rounded-xl hover:bg-gray-800 transition active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {loading ? "Đang xử lý..." : <> <FiUserPlus /> Đăng ký </>}
               </button>

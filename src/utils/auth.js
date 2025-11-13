@@ -21,3 +21,5 @@ export const logout = () => {
   localStorage.removeItem("role");
   window.location.reload();
 };
+
+
