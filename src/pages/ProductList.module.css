@@ -1,0 +1,431 @@
+.container {
+  padding-top: 14rem; /* Điều chỉnh theo navbar chính + category nav */
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  background: #f5f5f7;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-bottom: 4rem;
+}
+
+.grid {
+  max-width: 1400px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.productCard {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 1.5rem;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  position: relative;
+  overflow: hidden;
+}
+
+.productCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.02) 100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.productCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+.productCard:hover::before {
+  opacity: 1;
+}
+
+.imageContainer {
+  width: 100%;
+  height: 280px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #fafafa 0%, #ffffff 100%);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.productImage {
+  width: 85%;
+  height: 85%;
+  object-fit: contain;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 1;
+}
+
+.productCard:hover .productImage {
+  transform: scale(1.08);
+}
+
+.colorOptions {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.colorDot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  transition: all 0.25s ease;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.colorDot:hover {
+  transform: scale(1.15);
+}
+
+.selectedColor {
+  border-color: #000000;
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 3px #000000;
+}
+
+.content {
+  padding: 0 0.5rem;
+}
+
+.productName {
+  margin-top: 1rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1d1d1f;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro", "Helvetica Neue", sans-serif;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  margin-bottom: 0.5rem;
+}
+
+.description {
+  color: #86868b;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0.5rem 0 1rem;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", sans-serif;
+  min-height: 2.5rem;
+}
+
+.priceContainer {
+  margin-top: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.price {
+  color: #1d1d1f;
+  font-size: 1.125rem;
+  font-weight: 600;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+  letter-spacing: -0.01em;
+}
+
+.installmentInfo {
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem;
+  background: #f5f5f7;
+  border-radius: 8px;
+  font-size: 0.8125rem;
+  color: #6e6e73;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+}
+
+.monthlyPayment {
+  font-weight: 600;
+  color: #1d1d1f;
+  margin-top: 0.25rem;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.learnMoreBtn,
+.buyNowBtn {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border-radius: 980px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  letter-spacing: -0.01em;
+}
+
+.learnMoreBtn {
+  background: transparent;
+  color: #0071e3;
+  border: 1.5px solid #0071e3;
+}
+
+.learnMoreBtn:hover {
+  background: #0071e3;
+  color: #ffffff;
+  transform: scale(1.02);
+}
+
+.buyNowBtn {
+  background: #0071e3;
+  color: #ffffff;
+}
+
+.buyNowBtn:hover {
+  background: #0077ed;
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
+}
+
+.cartIcon {
+  width: 18px;
+  height: 18px;
+}
+
+/* Skeleton Loading States */
+.skeletonCard {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.skeletonImage {
+  width: 100%;
+  height: 280px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s ease-in-out infinite;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.skeletonColors {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1.2rem 0 1rem;
+}
+
+.skeletonColorDot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s ease-in-out infinite;
+}
+
+.skeletonContent {
+  padding: 0 0.5rem;
+}
+
+.skeletonTitle {
+  height: 1.5rem;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s ease-in-out infinite;
+  border-radius: 6px;
+  margin: 1rem auto 0.5rem;
+  width: 80%;
+}
+
+.skeletonDesc {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.skeletonDesc > div {
+  height: 0.875rem;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s ease-in-out infinite;
+  border-radius: 4px;
+}
+
+.skeletonDesc > div:first-child {
+  width: 100%;
+}
+
+.skeletonDesc > div:last-child {
+  width: 60%;
+}
+
+.skeletonPrice {
+  height: 1.25rem;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s ease-in-out infinite;
+  border-radius: 6px;
+  margin: 1rem auto 0.5rem;
+  width: 50%;
+}
+
+.skeletonInstallment {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  background: #f5f5f7;
+  border-radius: 8px;
+  margin: 0.5rem 0 1.5rem;
+}
+
+.skeletonInstallment > div {
+  height: 0.8125rem;
+  background: linear-gradient(90deg, #e8e8e8 25%, #e0e0e0 50%, #e8e8e8 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s ease-in-out infinite;
+  border-radius: 4px;
+}
+
+.skeletonInstallment > div:first-child {
+  width: 60%;
+}
+
+.skeletonInstallment > div:last-child {
+  width: 40%;
+}
+
+.skeletonButtons {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.skeletonButtons > div {
+  flex: 1;
+  height: 2.5rem;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s ease-in-out infinite;
+  border-radius: 980px;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Empty State */
+.emptyState {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+}
+
+.emptyIcon {
+  width: 80px;
+  height: 80px;
+  background: #f5f5f7;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.emptyIconSvg {
+  width: 40px;
+  height: 40px;
+  color: #86868b;
+}
+
+.emptyText {
+  font-size: 1.25rem;
+  color: #86868b;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+  font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding-top: 3rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+  }
+
+  .imageContainer {
+    height: 220px;
+  }
+
+  .productName {
+    font-size: 1.125rem;
+  }
+
+  .actionButtons {
+    flex-direction: column;
+  }
+
+  .learnMoreBtn,
+  .buyNowBtn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .imageContainer {
+    height: 260px;
+  }
+
+  .productCard {
+    padding: 1.25rem;
+  }
+}

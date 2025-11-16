@@ -1,6 +1,7 @@
-// src/pages/HomePage.jsx
 import ProductList from "./ProductList";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/Navbar"; 
+import IPhoneCategoryNav from "../components/iPhoneCategoryNav";
+import AppleFooter from "../components/AppleFooter";
 
 const HomePage = () => {
   return (
@@ -8,13 +9,22 @@ const HomePage = () => {
       {/* Navbar cố định */}
       <Navbar />
 
+      {/* iPhone Category Navigation */}
+      <div className="pt-[5.5rem]">
+        <IPhoneCategoryNav />
+      </div>
+
       {/* Product Section */}
-      <main className="pt-[5.5rem]"> {/* pt tương ứng chiều cao Navbar + 1cm (~5.5rem) */}
+      <main>
         <div className="max-w-7xl mx-auto px-4 py-8">
-          {/* Product Grid */}
           <ProductList />
         </div>
       </main>
+
+      {/* ⬇️ THÊM FOOTER APPLE Ở ĐÂY */}
+      <footer className="bg-[#f5f5f7] text-[#6e6e73] mt-10 border-t">
+        <AppleFooter />
+      </footer>
     </div>
   );
 };

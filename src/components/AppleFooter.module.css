@@ -1,0 +1,112 @@
+/* ===== Wrapper ===== */
+.wrapper {
+  max-width: 1024px;
+  margin: 40px auto 0;
+  padding: 0 24px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #6e6e73;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+/* ===== Legal Text ===== */
+.legal {
+  margin-bottom: 24px;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.legal p {
+  margin-bottom: 8px;
+  color: #86868b;
+}
+
+.legal ol {
+  margin: 0 0 12px 20px;
+  padding-left: 0;
+}
+
+.legal li {
+  margin-bottom: 8px;
+  color: #86868b;
+}
+
+/* ===== Divider ===== */
+.wrapper hr {
+  border: none;
+  border-top: 1px solid #d2d2d7;
+  margin: 24px 0;
+}
+
+/* ===== Footer Columns ===== */
+.columns {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 48px 32px;
+  margin: 0 0 32px 0;
+}
+
+.columns h4 {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1d1d1f;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.01em;
+}
+
+.columns ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.columns ul li {
+  margin: 4px 0 0 0;
+  color: #515154;
+  cursor: pointer;
+  transition: color 0.15s ease;
+  font-size: 12px;
+}
+
+.columns ul li:hover {
+  color: #1d1d1f;
+}
+
+/* ===== Footer Bottom ===== */
+.footerBottom {
+  border-top: 1px solid #d2d2d7;
+  padding-top: 16px;
+  margin-top: 0;
+  font-size: 12px;
+  color: #6e6e73;
+}
+
+.footerBottom p {
+  margin: 0 0 8px 0;
+  font-size: 12px;
+  color: #6e6e73;
+}
+
+/* ===== Bottom Row Links ===== */
+.footerRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 11px;
+  margin: 0;
+}
+
+.footerRow span {
+  color: #515154;
+  transition: color 0.15s ease;
+}
+
+.footerRow span:hover {
+  color: #1d1d1f;
+}
+
+/* ===== Apple subtle link look ===== */
+a {
+  text-decoration: none;
+  color: inherit;
+}

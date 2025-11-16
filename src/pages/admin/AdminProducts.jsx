@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { getToken } from "../../utils/auth";
 import { FiLoader, FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import "./AdminProducts.css";
 
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
@@ -17,9 +19,9 @@ export default function AdminProducts() {
     price: "",
     stock: "",
     images: [],
+    description: "",
   });
 
-  // Lấy danh sách sản phẩm
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -41,7 +43,6 @@ export default function AdminProducts() {
     }
   };
 
-  // Xử lý xóa sản phẩm
   const handleDeleteProduct = async (id) => {
     if (deletingId !== id) {
       setDeletingId(id);
@@ -63,7 +64,6 @@ export default function AdminProducts() {
     }
   };
 
-  // Xử lý form Thêm/Sửa
   const handleFormChange = (e) => {
     const { name, value, files } = e.target;
     if (files) {
@@ -83,12 +83,12 @@ export default function AdminProducts() {
       fd.append("name", formData.name);
       fd.append("price", formData.price);
       fd.append("stock", formData.stock || 0);
+      fd.append("description", formData.description);
       if (formData.images.length > 0) {
         Array.from(formData.images).forEach((file) => fd.append("images", file));
       }
 
       if (editingProduct) {
-        // Sửa sản phẩm
         await axios.put(
           `http://localhost:3000/api/products/${editingProduct._id}`,
           fd,
@@ -96,14 +96,13 @@ export default function AdminProducts() {
         );
         setEditingProduct(null);
       } else {
-        // Thêm sản phẩm
         await axios.post("http://localhost:3000/api/products", fd, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setAddingProduct(false);
       }
 
-      setFormData({ name: "", price: "", stock: "", images: [] });
+      setFormData({ name: "", price: "", stock: "", images: [], description: "" });
       fetchProducts();
     } catch (err) {
       console.error(err);
@@ -113,164 +112,162 @@ export default function AdminProducts() {
     }
   };
 
-  if (loading)
+  // --- Thêm: Drag & Drop ---
+  const handleDragEnd = async (result) => {
+    if (!result.destination) return;
+
+    const reordered = Array.from(products);
+    const [moved] = reordered.splice(result.source.index, 1);
+    reordered.splice(result.destination.index, 0, moved);
+
+    setProducts(reordered);
+
+    // Gửi thứ tự mới lên server (tùy backend)
+    try {
+      const token = getToken();
+      await axios.put(
+        "http://localhost:3000/api/products/reorder",
+        { productIds: reordered.map(p => p._id) },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+    } catch (err) {
+      console.error("Không thể cập nhật thứ tự sản phẩm:", err);
+    }
+  };
+
+  if (loading) {
     return (
-      <div className="flex items-center justify-center py-20 text-gray-500">
-        <FiLoader className="animate-spin mr-3 h-8 w-8" />
+      <div className="admin-products loading">
+        <FiLoader />
         Đang tải sản phẩm...
       </div>
     );
+  }
 
   return (
-    <div className="space-y-6">
-      {error && (
-        <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-          {error}
-        </div>
-      )}
+    <div className="admin-products">
+      {error && <div className="error">{error}</div>}
 
-      <div className="flex justify-between items-center mb-2">
-        <h2 className="text-xl font-semibold">Danh sách sản phẩm</h2>
-        <button
-          onClick={() => setAddingProduct(true)}
-          className="flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
-        >
-          <FiPlus className="mr-2" />
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <h2>Danh sách sản phẩm</h2>
+        <button className="btn-add" onClick={() => setAddingProduct(true)}>
+          <FiPlus style={{ marginRight: "0.5rem" }} />
           Thêm sản phẩm
         </button>
       </div>
 
-      <div className="overflow-x-auto bg-white shadow-lg rounded-xl border border-gray-200">
-        <table className="w-full">
-          <thead>
-            <tr className="bg-gradient-to-r from-green-50 to-green-100 text-gray-700">
-              <th className="p-2 text-left font-semibold">#</th>
-              <th className="p-2 text-left font-semibold">Ảnh</th>
-              <th className="p-2 text-left font-semibold">Tên sản phẩm</th>
-              <th className="p-2 text-left font-semibold">Giá</th>
-              <th className="p-2 text-left font-semibold">Số lượng</th>
-              <th className="p-2 text-center font-semibold">Ngày tạo</th>
-              <th className="p-2 text-center font-semibold">Hành động</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((product, index) => (
-              <tr
-                key={product._id}
-                className="border-b border-gray-100 hover:bg-green-50 transition-colors"
-              >
-                <td className="p-2 font-medium">{index + 1}</td>
-                        <td className="p-2">
-                        {product.images?.[0] && (
-                            <img
-                            src={product.images[0]}
-                            alt={product.name}
-                            className="h-8 w-8 rounded-sm object-cover"
-                            />
-                        )}
-                        </td>
-
-                <td className="p-2 font-medium">{product.name || "—"}</td>
-                <td className="p-2 text-green-600 font-semibold">
-                  ₫{product.price?.toLocaleString("vi-VN") || "—"}
-                </td>
-                <td className="p-2">{product.stock || 0}</td>
-                <td className="p-2 text-center text-gray-500 text-sm">
-                  {new Date(product.createdAt).toLocaleDateString("vi-VN")}
-                </td>
-                <td className="p-2 text-center">
-                  <button
-                    onClick={() => {
-                      setEditingProduct(product);
-                      setFormData({
-                        name: product.name,
-                        price: product.price,
-                        stock: product.stock,
-                        images: [],
-                      });
-                    }}
-                    className="text-blue-600 hover:text-blue-800 mr-2 transition-colors"
-                    title="Sửa"
-                  >
-                    <FiEdit2 size={14} />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteProduct(product._id)}
-                    className="text-red-600 hover:text-red-800 transition-colors"
-                    title="Xóa"
-                  >
-                    <FiTrash2 size={14} />
-                  </button>
-                </td>
+      <div style={{ overflowX: "auto" }}>
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Ảnh</th>
+                <th>Tên sản phẩm</th>
+                <th>Mô tả</th>
+                <th>Giá</th>
+                <th>Số lượng</th>
+                <th>Ngày tạo</th>
+                <th>Hành động</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-
-        {products.length === 0 && (
-          <div className="text-center py-8 text-gray-500">
-            <FiPlus className="mx-auto h-12 w-12 mb-4 opacity-50" />
-            Chưa có sản phẩm nào.
-          </div>
-        )}
+            </thead>
+            <Droppable droppableId="products">
+              {(provided) => (
+                <tbody {...provided.droppableProps} ref={provided.innerRef}>
+                  {products.map((product, index) => (
+                    <Draggable key={product._id} draggableId={product._id} index={index}>
+                      {(provided, snapshot) => (
+                        <tr
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          style={{
+                            ...provided.draggableProps.style,
+                            backgroundColor: snapshot.isDragging ? "#d1fae5" : "",
+                          }}
+                        >
+                          <td>{index + 1}</td>
+                          <td>{product.images?.[0] && <img src={product.images[0]} alt={product.name} />}</td>
+                          <td>{product.name || "—"}</td>
+                          <td>{product.description || "—"}</td>
+                          <td>{product.price?.toLocaleString("vi-VN") || "—"}₫</td>
+                          <td>{product.stock || 0}</td>
+                          <td>{new Date(product.createdAt).toLocaleDateString("vi-VN")}</td>
+                          <td>
+                            <button className="btn-edit" onClick={() => {
+                              setEditingProduct(product);
+                              setFormData({
+                                name: product.name,
+                                price: product.price,
+                                stock: product.stock,
+                                images: [],
+                                description: product.description || "",
+                              });
+                            }}>
+                              <FiEdit2 />
+                            </button>
+                            <button className="btn-delete" onClick={() => handleDeleteProduct(product._id)}>
+                              <FiTrash2 />
+                            </button>
+                          </td>
+                        </tr>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                  {products.length === 0 && (
+                    <tr>
+                      <td colSpan="8" style={{ textAlign: "center", padding: "2rem" }}>
+                        <FiPlus style={{ fontSize: "3rem", opacity: 0.5 }} />
+                        <div>Chưa có sản phẩm nào.</div>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              )}
+            </Droppable>
+          </table>
+        </DragDropContext>
       </div>
 
-      {/* Modal Thêm/Sửa sản phẩm */}
+      {/* Modal Thêm/Sửa */}
       {(addingProduct || editingProduct) && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              {editingProduct ? "Sửa sản phẩm" : "Thêm sản phẩm"}
-            </h3>
-            <div className="space-y-3">
-              <input
-                type="text"
-                name="name"
-                placeholder="Tên sản phẩm"
-                value={formData.name}
-                onChange={handleFormChange}
-                className="w-full p-2 border rounded-md"
-              />
-              <input
-                type="number"
-                name="price"
-                placeholder="Giá"
-                value={formData.price}
-                onChange={handleFormChange}
-                className="w-full p-2 border rounded-md"
-              />
-              <input
-                type="number"
-                name="stock"
-                placeholder="Số lượng"
-                value={formData.stock}
-                onChange={handleFormChange}
-                className="w-full p-2 border rounded-md"
-              />
-              <input
-                type="file"
-                name="images"
-                multiple
-                onChange={handleFormChange}
-                className="w-full"
-              />
-            </div>
-            <div className="flex justify-end gap-3 mt-4">
-              <button
-                onClick={() => {
-                  setAddingProduct(false);
-                  setEditingProduct(null);
-                }}
-                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-md"
-              >
-                Hủy
-              </button>
-              <button
-                onClick={handleSubmit}
-                disabled={loadingAction}
-                className="px-4 py-2 bg-green-600 text-white hover:bg-green-700 rounded-md disabled:opacity-50"
-              >
-                {loadingAction ? <FiLoader className="animate-spin" /> : "Lưu"}
+        <div className="modal-backdrop">
+          <div className="modal-content">
+            <h3>{editingProduct ? "Sửa sản phẩm" : "Thêm sản phẩm"}</h3>
+            <input
+              type="text"
+              name="name"
+              placeholder="Tên sản phẩm"
+              value={formData.name}
+              onChange={handleFormChange}
+            />
+            <textarea
+              name="description"
+              placeholder="Mô tả sản phẩm"
+              value={formData.description}
+              onChange={handleFormChange}
+              rows={3}
+            />
+            <input
+              type="number"
+              name="price"
+              placeholder="Giá"
+              value={formData.price}
+              onChange={handleFormChange}
+            />
+            <input
+              type="number"
+              name="stock"
+              placeholder="Số lượng"
+              value={formData.stock}
+              onChange={handleFormChange}
+            />
+            <input type="file" name="images" multiple onChange={handleFormChange} />
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.5rem", marginTop: "1rem" }}>
+              <button onClick={() => { setAddingProduct(false); setEditingProduct(null); }}>Hủy</button>
+              <button onClick={handleSubmit} disabled={loadingAction}>
+                {loadingAction ? <FiLoader className="loading" /> : "Lưu"}
               </button>
             </div>
           </div>
@@ -279,28 +276,14 @@ export default function AdminProducts() {
 
       {/* Confirm Delete */}
       {deletingId && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full mx-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Xác nhận xóa?
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Bạn có chắc chắn muốn xóa sản phẩm này? Hành động này không thể
-              hoàn tác.
-            </p>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setDeletingId(null)}
-                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-md"
-              >
-                Hủy
-              </button>
-              <button
-                onClick={() => handleDeleteProduct(deletingId)}
-                disabled={loadingAction}
-                className="px-4 py-2 bg-red-600 text-white hover:bg-red-700 rounded-md disabled:opacity-50"
-              >
-                {loadingAction ? <FiLoader className="animate-spin" /> : "Xóa"}
+        <div className="modal-backdrop">
+          <div className="modal-content">
+            <h3>Xác nhận xóa?</h3>
+            <p>Bạn có chắc chắn muốn xóa sản phẩm này? Hành động này không thể hoàn tác.</p>
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.5rem" }}>
+              <button onClick={() => setDeletingId(null)}>Hủy</button>
+              <button onClick={() => handleDeleteProduct(deletingId)} disabled={loadingAction}>
+                {loadingAction ? <FiLoader className="loading" /> : "Xóa"}
               </button>
             </div>
           </div>

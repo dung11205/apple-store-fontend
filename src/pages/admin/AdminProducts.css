@@ -1,0 +1,149 @@
+/* AdminProducts.css */
+
+/* Container tổng */
+.admin-products {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* space-y-6 tương đương */
+}
+
+/* Table */
+.admin-products table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.admin-products th,
+.admin-products td {
+  padding: 0.5rem 1rem;
+  text-align: left;
+  font-size: 0.875rem;
+  color: #374151; /* text-gray-700 */
+}
+
+.admin-products th {
+  background: linear-gradient(to right, #ecfdf5, #d1fae5); /* green gradient */
+  font-weight: 600;
+}
+
+.admin-products tbody tr:hover {
+  background-color: #d1fae5; /* hover:bg-green-50 */
+}
+
+.admin-products img {
+  width: 2rem;
+  height: 2rem;
+  object-fit: cover;
+  border-radius: 0.125rem;
+}
+
+/* Buttons */
+.admin-products button {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-products .btn-add {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: #16a34a; /* green-600 */
+  color: white;
+  border-radius: 0.375rem;
+}
+
+.admin-products .btn-add:hover {
+  background-color: #15803d; /* green-700 */
+}
+
+.admin-products .btn-edit {
+  color: #2563eb; /* blue-600 */
+}
+
+.admin-products .btn-edit:hover {
+  color: #1e40af; /* blue-800 */
+}
+
+.admin-products .btn-delete {
+  color: #dc2626; /* red-600 */
+}
+
+.admin-products .btn-delete:hover {
+  color: #b91c1c; /* red-800 */
+}
+
+/* Modals */
+.admin-products .modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+}
+
+.admin-products .modal-content {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  max-width: 24rem;
+  width: 90%;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.admin-products .modal-content h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.admin-products .modal-content input,
+.admin-products .modal-content textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db; /* gray-300 */
+  border-radius: 0.375rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Loading */
+.admin-products .loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 0;
+  color: #6b7280; /* gray-500 */
+}
+
+.admin-products .loading svg {
+  margin-right: 0.75rem;
+  height: 2rem;
+  width: 2rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Error message */
+.admin-products .error {
+  padding: 1rem;
+  background-color: #fee2e2; /* red-100 */
+  border: 1px solid #fca5a5; /* red-400 */
+  color: #b91c1c; /* red-700 */
+  border-radius: 0.5rem;
+}
+.admin-products tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.admin-products tbody tr.dragging {
+  background-color: #d1fae5;
+}

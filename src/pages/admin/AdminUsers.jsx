@@ -166,7 +166,6 @@ export default function AdminUsers({ setError }) {
                 ))}
               </tbody>
             </table>
-
             {users.length === 0 && (
               <div className="text-center py-8 text-gray-500">
                 <FiUsers className="mx-auto h-12 w-12 mb-4 opacity-50" />

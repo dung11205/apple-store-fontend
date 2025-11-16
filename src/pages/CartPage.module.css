@@ -1,0 +1,157 @@
+.cartContainer {
+  max-width: 1024px;
+  margin: 7rem auto 2rem auto; /* offset navbar */
+  padding: 0 1rem;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.cartTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.emptyState {
+  text-align: center;
+  font-size: 1rem;
+  color: #555;
+}
+
+.emptyLink {
+  color: #0070f3;
+  cursor: pointer;
+}
+
+.cartItem {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 1rem 0;
+  margin-bottom: 1rem;
+}
+
+.cartItemTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.cartItemInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cartItemImg {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.cartItemDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.cartItemName {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.cartItemPrice,
+.cartItemQty {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.cartItemActions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+.buyBtn {
+  background: none;
+  border: none;
+  color: #0070f3;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.buyBtn:hover {
+  text-decoration: underline;
+}
+
+.removeBtn {
+  background: none;
+  border: none;
+  color: #f44336;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.removeBtn:hover {
+  color: #d32f2f;
+}
+
+.checkoutForm {
+  border: 1px solid #e0e0e0;
+  padding: 1rem;
+  margin-top: 0.5rem;
+  border-radius: 8px;
+  background-color: #fafafa;
+}
+
+.checkoutTitle {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.checkoutInput {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.checkoutBtn {
+  background-color: #0070f3;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.checkoutBtn:hover {
+  background-color: #005bb5;
+}
+
+.cancelBtn {
+  background-color: #e0e0e0;
+  color: #333;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.cancelBtn:hover {
+  background-color: #bdbdbd;
+}
+
+.cartTotal {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.5rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+.cartTotalLabel {
+  color: #333;
+}
