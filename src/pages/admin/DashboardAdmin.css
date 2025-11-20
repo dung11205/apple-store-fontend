@@ -1,0 +1,170 @@
+/* DashboardAdmin.css */
+
+/* Font system Apple */
+body, .dashboard-admin {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  background-color: #f5f5f7;
+  color: #1d1d1f;
+}
+
+/* Container */
+.dashboard-admin {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 240px;
+  background-color: #fff;
+  border-right: 1px solid #e5e5e5;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1.25rem;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+}
+
+.sidebar-header {
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #e5e5e5;
+  margin-bottom: 2rem;
+}
+
+.sidebar-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+
+/* Sidebar nav */
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  font-weight: 500;
+  border-radius: 0.75rem;
+  color: #1d1d1f;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.nav-btn span {
+  font-size: 0.95rem;
+}
+
+.nav-btn:hover {
+  background-color: #f2f2f7;
+  color: #0071e3;
+}
+
+.nav-btn.active {
+  background-color: #0071e3;
+  color: #fff;
+}
+
+/* Logout button */
+.logout-btn {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-weight: 500;
+  color: #fff;
+  background-color: #ff3b30;
+  border-radius: 0.75rem;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.logout-btn:hover {
+  background-color: #d32f2f;
+}
+
+/* Main content */
+.main-content {
+  flex: 1;
+  padding: 2rem;
+}
+
+/* Error */
+.error-message {
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  background-color: #ffeded;
+  color: #b91c1c;
+  border-radius: 0.5rem;
+  border: 1px solid #fca5a5;
+}
+
+/* Summary cards */
+.summary-cards {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.card {
+  flex: 1;
+  background-color: #fff;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.card-title {
+  font-size: 0.9rem;
+  color: #6e6e73;
+  margin-bottom: 0.5rem;
+}
+
+.card-number {
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+
+/* Tab content */
+.tab-content {
+  margin-top: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard-admin {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 0.5rem;
+  }
+  .sidebar-nav {
+    flex-direction: row;
+  }
+  .nav-btn {
+    flex: 1 0 auto;
+    margin: 0 0.25rem;
+  }
+  .logout-btn {
+    margin-left: auto;
+  }
+  .summary-cards {
+    flex-direction: column;
+  }
+}

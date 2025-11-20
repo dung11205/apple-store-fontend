@@ -1,3 +1,4 @@
+// src/pages/LoginPage.jsx
 import React, { useState } from "react";
 import { loginUser } from "../api/authApi";
 import { saveAuth } from "../utils/auth";
@@ -14,15 +15,23 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+
     try {
       const res = await loginUser(form);
       const userRole = res.user?.role || "user";
 
-      saveAuth(res.access_token, userRole);
+      // Lưu token + role + user → CartContext sẽ nhận event auth-changed
+      saveAuth(res.access_token, userRole, res.user);
 
-      // Nếu là admin → về dashboard admin
-      if (userRole === "admin") navigate("/admin/dashboard");
-      else navigate("/");
+      // Chuyển hướng theo role
+      if (userRole === "admin") {
+        navigate("/admin/dashboard");
+      } else {
+        // Redirect user sau khi login về /my-orders
+        navigate("/my-orders");
+      }
+
     } catch (err) {
       setError(err.response?.data?.message || "Đăng nhập thất bại");
     }

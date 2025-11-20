@@ -30,4 +30,9 @@ export const updateOrderStatus = (orderId, status) =>
 
 // User xem đơn hàng của mình
 export const getUserOrders = (phone) => API.get(`/orders/user/${phone}`);
-  
+
+// user và adm hủy đơn hàng
+// User hủy đơn hoặc admin hủy đơn
+export const cancelOrder = async (orderId) => {
+  return await API.patch(`/orders/${orderId}/status`, { status: "cancelled" });
+};

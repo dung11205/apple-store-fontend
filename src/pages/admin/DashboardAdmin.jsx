@@ -4,76 +4,75 @@ import { FiUsers, FiLogOut, FiBox, FiShoppingCart } from "react-icons/fi";
 import { logout } from "../../utils/auth";
 import AdminUsers from "./AdminUsers";
 import AdminProducts from "./AdminProducts";
-import AdminOrders from "./AdminOrders"; // tab quản lý đơn hàng
+import AdminOrders from "./AdminOrders";
+import "./DashboardAdmin.css";
 
 export default function DashboardAdmin() {
   const [activeTab, setActiveTab] = useState("users");
   const [error, setError] = useState("");
 
+  // Dummy data summary
+  // const summary = {
+  //   users: 120,
+  //   products: 45,
+  //   orders: 78,
+  // };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* Header */}
-      <header className="bg-white shadow-lg border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-            <FiUsers className="text-blue-600" />
-            Bảng điều khiển Admin
-          </h1>
+    <div className="dashboard-admin">
+      {/* Sidebar */}
+      <aside className="sidebar">
+        <div className="sidebar-header">
+          <h2 className="sidebar-title"> Admin Dashboard</h2>
+        </div>
+
+        <nav className="sidebar-nav">
           <button
-            onClick={logout}
-            className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-sm"
+            onClick={() => setActiveTab("users")}
+            className={`nav-btn ${activeTab === "users" ? "active" : ""}`}
           >
-            <FiLogOut /> Đăng xuất
+            <FiUsers /> <span>Users</span>
           </button>
-        </div>
-      </header>
+          <button
+            onClick={() => setActiveTab("products")}
+            className={`nav-btn ${activeTab === "products" ? "active" : ""}`}
+          >
+            <FiBox /> <span>Products</span>
+          </button>
+          <button
+            onClick={() => setActiveTab("orders")}
+            className={`nav-btn ${activeTab === "orders" ? "active" : ""}`}
+          >
+            <FiShoppingCart /> <span>Orders</span>
+          </button>
+        </nav>
 
-      {/* Main */}
-      <main className="max-w-7xl mx-auto p-6">
-        {error && (
-          <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-            {error}
+        <button className="logout-btn" onClick={logout}>
+          <FiLogOut /> <span>Logout</span>
+        </button>
+      </aside>
+
+      {/* Main content */}
+      <main className="main-content">
+        {error && <div className="error-message">{error}</div>}
+
+        {/* Summary cards */}
+        <div className="summary-cards">
+          {/* <div className="card">
+            <div className="card-title">Users</div>
+            <div className="card-number">{summary.users}</div>
           </div>
-        )}
-
-        {/* Tabs */}
-        <div className="mb-6">
-          <nav className="flex space-x-1 bg-white rounded-xl shadow-sm border border-gray-200">
-            <button
-              onClick={() => setActiveTab("users")}
-              className={`px-6 py-3 rounded-lg font-medium transition-colors ${
-                activeTab === "users"
-                  ? "bg-blue-600 text-white shadow-md"
-                  : "text-gray-600 hover:bg-gray-50"
-              }`}
-            >
-              <FiUsers className="inline mr-1" /> Quản lý Người dùng
-            </button>
-            <button
-              onClick={() => setActiveTab("products")}
-              className={`px-6 py-3 rounded-lg font-medium transition-colors ${
-                activeTab === "products"
-                  ? "bg-green-600 text-white shadow-md"
-                  : "text-gray-600 hover:bg-gray-50"
-              }`}
-            >
-              <FiBox className="inline mr-1" /> Quản lý Sản phẩm
-            </button>
-            <button
-              onClick={() => setActiveTab("orders")}
-              className={`px-6 py-3 rounded-lg font-medium transition-colors ${
-                activeTab === "orders"
-                  ? "bg-yellow-600 text-white shadow-md"
-                  : "text-gray-600 hover:bg-gray-50"
-              }`}
-            >
-              <FiShoppingCart className="inline mr-1" /> Quản lý Đơn hàng
-            </button>
-          </nav>
+          <div className="card">
+            <div className="card-title">Products</div>
+            <div className="card-number">{summary.products}</div>
+          </div>
+          <div className="card">
+            <div className="card-title">Orders</div>
+            <div className="card-number">{summary.orders}</div>
+          </div> */}
         </div>
 
-        {/* Render tab content */}
-        <div className="space-y-6">
+        <div className="tab-content">
           {activeTab === "users" && <AdminUsers setError={setError} />}
           {activeTab === "products" && <AdminProducts setError={setError} />}
           {activeTab === "orders" && <AdminOrders setError={setError} />}

@@ -1,15 +1,14 @@
-// pages/RegisterPage.jsx - Thêm logic role: Mặc định 'user', chỉ hiện select role nếu current user is admin (từ localStorage)
 import React, { useState } from "react";
 import { registerUser } from "../api/authApi";
-import { isAuthenticated, getRole } from "../utils/auth"; // Import để check current role
+import { saveAuth, isAuthenticated, getRole } from "../utils/auth";
 import { useNavigate, Link } from "react-router-dom";
 
 export default function RegisterPage() {
-  const [form, setForm] = useState({ 
-    name: "", 
-    email: "", 
-    password: "", 
-    role: "user" // Mặc định 'user'
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    role: "user", // Mặc định 'user'
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -26,10 +25,18 @@ export default function RegisterPage() {
     try {
       // Nếu không phải admin, force role = 'user'
       const submitData = isCurrentAdmin ? form : { ...form, role: "user" };
-      await registerUser(submitData);
-      navigate("/login");
+      const res = await registerUser(submitData);
+
+      if (!isCurrentAdmin) {
+        // Nếu user thường, tự login luôn sau khi đăng ký
+        saveAuth(res.access_token, res.user.role, res.user);
+        navigate("/"); // redirect về trang chủ
+      } else {
+        // Admin tạo tài khoản → về dashboard admin
+        navigate("/admin/dashboard");
+      }
     } catch (err) {
-      setError(err.message || "Đăng ký thất bại");
+      setError(err.response?.data?.message || err.message || "Đăng ký thất bại");
     }
   };
 
@@ -65,7 +72,7 @@ export default function RegisterPage() {
             required
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black outline-none"
           />
-          
+
           {/* Chỉ hiện select role nếu current user là admin */}
           {isCurrentAdmin && (
             <select

@@ -1,23 +1,32 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { FiTrash2 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import { getCart, removeFromCart } from "../utils/cartHelper";
+import { isAuthenticated, getUserInfo } from "../utils/auth";
+import { CartContext } from "../context/CartContext";
 import { createOrder } from "../api/orders.api";
 import styles from "./CartPage.module.css";
 
 function CartPage() {
-  const [cart, setCart] = useState([]);
+  const navigate = useNavigate();
+  const { cart, updateCart, cartLoaded } = useContext(CartContext);
   const [checkoutProduct, setCheckoutProduct] = useState(null);
   const [userInfo, setUserInfo] = useState({ name: "", phone: "", address: "" });
-  const navigate = useNavigate();
 
   useEffect(() => {
-    setCart(getCart());
-  }, []);
+    // Cho phép guest xem giỏ hàng nhưng chỉ lấy thông tin user nếu đã đăng nhập
+    const user = getUserInfo();
+    if (user) {
+      setUserInfo({
+        name: user.name || "",
+        phone: user.phone || "",
+        address: user.address || "",
+      });
+    }
+  }, [navigate]);
 
   const removeItem = (id) => {
-    const updatedCart = removeFromCart(id);
-    setCart(updatedCart);
+    const updatedCart = cart.filter((item) => item._id !== id);
+    updateCart(updatedCart);
   };
 
   const handleInputChange = (e) => {
@@ -26,10 +35,16 @@ function CartPage() {
 
   const handleBuyNow = (product) => {
     setCheckoutProduct(product);
-    setUserInfo({ name: "", phone: "", address: "" });
   };
 
   const handlePlaceOrder = async () => {
+    // Yêu cầu đăng nhập trước khi đặt hàng
+    if (!isAuthenticated()) {
+      alert("Vui lòng đăng nhập để tiến hành đặt hàng!");
+      navigate('/login');
+      return;
+    }
+
     if (!userInfo.name || !userInfo.phone || !userInfo.address) {
       alert("Vui lòng điền đầy đủ thông tin!");
       return;
@@ -45,19 +60,12 @@ function CartPage() {
     };
 
     try {
-      console.log("DEBUG: GỬI ORDER", orderData);
-      const res = await createOrder(orderData);
-      console.log("DEBUG: RESPONSE", res.data);
-
+      await createOrder(orderData);
       alert(`Cảm ơn ${userInfo.name} đã đặt ${checkoutProduct.name}!`);
 
-      // Lưu phone vào localStorage để xem đơn hàng
-      localStorage.setItem("userPhone", userInfo.phone);
-
-      // Xóa sản phẩm khỏi giỏ
       const updatedCart = cart.filter((item) => item._id !== checkoutProduct._id);
-      localStorage.setItem("cart", JSON.stringify(updatedCart));
-      setCart(updatedCart);
+      updateCart(updatedCart);
+
       setCheckoutProduct(null);
     } catch (error) {
       console.error("Đặt hàng thất bại:", error.response || error);
@@ -65,22 +73,16 @@ function CartPage() {
     }
   };
 
-  const handleViewOrders = () => {
-    const phoneToUse = userInfo.phone || localStorage.getItem("userPhone");
-    if (!phoneToUse) {
-      alert("Vui lòng nhập số điện thoại để xem đơn hàng đã mua!");
-      return;
-    }
-    navigate("/my-orders", { state: { phone: phoneToUse } });
-  };
+  const handleViewOrders = () => navigate("/my-orders");
 
   const getTotal = () => cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  if (!cartLoaded) return <p>Đang tải giỏ hàng...</p>;
 
   return (
     <div className={styles.cartContainer}>
       <h1 className={styles.cartTitle}>🛒 Giỏ hàng của bạn</h1>
 
-      {/* Nút xem đơn hàng đã mua */}
       <button
         className="mb-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
         onClick={handleViewOrders}
@@ -118,7 +120,7 @@ function CartPage() {
                 </div>
               </div>
 
-              {checkoutProduct?._id === item._id && (
+              {checkoutProduct && checkoutProduct._id === item._id && (
                 <div className={styles.checkoutForm}>
                   <h3>Đặt hàng: {checkoutProduct.name}</h3>
                   <input
@@ -162,7 +164,7 @@ function CartPage() {
         </>
       )}
     </div>
-  );
+  );  
 }
 
 export default CartPage;

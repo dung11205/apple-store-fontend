@@ -1,25 +1,51 @@
-// utils/auth.js - Giữ nguyên, không thay đổi (lỗi không từ đây)
-export const saveAuth = (token, role) => {
+// src/utils/auth.js
+
+// Lưu token, role, user vào localStorage
+export const saveAuth = (token, role, user) => {
   localStorage.setItem("token", token);
   localStorage.setItem("role", role);
+
+  if (user && typeof user === "object") {
+    localStorage.setItem("user", JSON.stringify(user));
+  } else {
+    localStorage.removeItem("user");
+  }
+
+  // Dispatch event để CartContext reload giỏ hàng
+  window.dispatchEvent(new Event("auth-changed"));
 };
 
-export const getToken = () => {
-  return localStorage.getItem("token");
+// Lấy token từ localStorage
+export const getToken = () => localStorage.getItem("token");
+
+// Lấy role
+export const getRole = () => localStorage.getItem("role");
+
+// Lấy thông tin user
+export const getUserInfo = () => {
+  try {
+    const user = localStorage.getItem("user");
+    if (!user) return null;
+    return JSON.parse(user);
+  } catch (err) {
+    console.error("Lỗi parse user info:", err);
+    localStorage.removeItem("user");
+    return null;
+  }
 };
 
-export const getRole = () => {
-  return localStorage.getItem("role");
-};
+// Kiểm tra đã đăng nhập chưa
+export const isAuthenticated = () => !!localStorage.getItem("token");
 
-export const isAuthenticated = () => {
-  return !!localStorage.getItem("token");
-};
-
+// Logout
 export const logout = () => {
   localStorage.removeItem("token");
   localStorage.removeItem("role");
+  localStorage.removeItem("user");
+
+  // Dispatch event để CartContext reset cart
+  window.dispatchEvent(new Event("auth-changed"));
+
+  // Reload trang (tuỳ nhu cầu)
   window.location.reload();
 };
-
-

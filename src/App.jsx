@@ -1,3 +1,4 @@
+// src/App.jsx
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
@@ -11,7 +12,6 @@ import { CartProvider } from "./context/CartContext";
 import CartPage from "./pages/CartPage";
 import UserOrders from "./pages/UserOrders";
 
-
 export default function App() {
   const location = useLocation();
 
@@ -21,34 +21,32 @@ export default function App() {
     location.pathname === "/register";
 
   return (
-    <>
-      {!hideNavbar && <Navbar />}
+    <CartProvider>
+      {!hideNavbar && <Navbar />}  {/* Navbar giờ nằm trong CartProvider */}
 
       <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/products" element={<ProductList />} />
-          <Route path="/cart" element={<CartPage />} />
-          
-          {/* User orders page */}
-          <Route path="/my-orders" element={<UserOrders />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/products" element={<ProductList />} />
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/my-orders" element={<UserOrders />} />
+        
+        {/* Admin routes */}
+        <Route path="/admin/login" element={<AdminLoginPage />} />
+        <Route  
+          path="/admin/dashboard"
+          element={
+            <AdminRoute>
+              <DashboardAdmin />   
+            </AdminRoute>
+          }
+        />
 
-          {/* Admin routes */}
-          <Route path="/admin/login" element={<AdminLoginPage />} />
-          <Route  
-            path="/admin/dashboard"
-            element={
-              <AdminRoute>
-                <DashboardAdmin />  
-              </AdminRoute>
-            }
-          />
-
-          {/* Redirect tất cả route không tồn tại về / */}
-          <Route path="*" element={<Navigate to="/" replace />} />  
-        </Routes>
-
-    </>
+        {/* Redirect tất cả route không tồn tại về / */}
+        <Route path="*" element={<Navigate to="/" replace />} />  
+      </Routes>
+    </CartProvider>
   );
 }
+
