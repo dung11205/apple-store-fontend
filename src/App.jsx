@@ -1,4 +1,3 @@
-// src/App.jsx
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
@@ -22,8 +21,7 @@ export default function App() {
 
   return (
     <CartProvider>
-      {!hideNavbar && <Navbar />}  {/* Navbar giờ nằm trong CartProvider */}
-
+      {!hideNavbar && <Navbar />}
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -31,22 +29,21 @@ export default function App() {
         <Route path="/products" element={<ProductList />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/my-orders" element={<UserOrders />} />
-        
+
         {/* Admin routes */}
         <Route path="/admin/login" element={<AdminLoginPage />} />
-        <Route  
+        <Route
           path="/admin/dashboard"
           element={
             <AdminRoute>
-              <DashboardAdmin />   
+              <DashboardAdmin />
             </AdminRoute>
           }
         />
 
         {/* Redirect tất cả route không tồn tại về / */}
-        <Route path="*" element={<Navigate to="/" replace />} />  
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </CartProvider>
   );
 }
-

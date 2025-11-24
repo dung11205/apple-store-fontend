@@ -1,4 +1,3 @@
-// src/pages/admin/DashboardAdmin.jsx
 import React, { useState } from "react";
 import { FiUsers, FiLogOut, FiBox, FiShoppingCart } from "react-icons/fi";
 import { logout } from "../../utils/auth";

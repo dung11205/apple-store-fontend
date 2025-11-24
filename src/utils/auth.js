@@ -1,4 +1,3 @@
-// src/utils/auth.js
 
 // Lưu token, role, user vào localStorage
 export const saveAuth = (token, role, user) => {

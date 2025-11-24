@@ -54,6 +54,7 @@ function CartPage() {
       productId: checkoutProduct._id,
       productName: checkoutProduct.name,
       quantity: Number(checkoutProduct.quantity),
+      price: checkoutProduct.price,
       name: userInfo.name,
       phone: userInfo.phone,
       address: userInfo.address,
