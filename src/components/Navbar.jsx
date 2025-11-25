@@ -44,9 +44,11 @@ const Navbar = () => {
     <>
       <nav className={styles.navbar}>
         <div className={styles.navbarContainer}>
+          {/* Logo */}
           <FaApple className={styles.logo} onClick={() => navigate("/")} />
 
           <div className="flex-1 flex justify-center items-center gap-4 max-w-4xl">
+            {/* Menu */}
             <ul className={styles.menu}>
               {menuData.map((item, index) => (
                 <li
@@ -54,12 +56,16 @@ const Navbar = () => {
                   className={styles.menuItem}
                   onMouseEnter={() => handleMouseEnter(index)}
                   onMouseLeave={handleMouseLeave}
+                  onClick={() =>
+                    navigate(`/products?category=${item.name.toLowerCase().replace(/\s+/g, "")}`)
+                  }
                 >
                   <span>
                     {item.name}{" "}
                     {item.sub.length > 0 && <FiChevronDown className="text-sm opacity-60" />}
                   </span>
 
+                  {/* Dropdown nếu có sub menu */}
                   {hoveredItem === index && item.sub.length > 0 && (
                     <div className={styles.dropdown}>
                       {item.sub.map((subItem, subIndex) => (
@@ -68,7 +74,9 @@ const Navbar = () => {
                           className={styles.dropdownItem}
                           onClick={() =>
                             navigate(
-                              `/${item.name.toLowerCase().replace(/\s+/g, "-")}/${subItem.toLowerCase().replace(/\s+/g, "-")}`
+                              `/${item.name.toLowerCase().replace(/\s+/g, "-")}/${subItem
+                                .toLowerCase()
+                                .replace(/\s+/g, "-")}`
                             )
                           }
                         >
@@ -81,6 +89,7 @@ const Navbar = () => {
                 </li>
               ))}
 
+              {/* Login / Logout */}
               <li
                 className={styles.authButton}
                 onClick={() => handleAuthClick("login")}
@@ -89,7 +98,9 @@ const Navbar = () => {
               </li>
             </ul>
 
+            {/* Icons */}
             <div className={styles.icons}>
+              {/* Search */}
               <div className="relative">
                 <FiSearch className="cursor-pointer" onClick={toggleSearch} />
                 {showSearch && (
@@ -107,7 +118,7 @@ const Navbar = () => {
                 )}
               </div>
 
-              {/* Cart Icon */}
+              {/* Cart */}
               <div className="relative cursor-pointer" onClick={() => navigate("/cart")}>
                 <div className="nav-cart-icon">
                   <FiShoppingBag />
@@ -123,6 +134,7 @@ const Navbar = () => {
         </div>
       </nav>
 
+      {/* Auth Modal */}
       <AuthModal
         isOpen={showAuthModal}
         onClose={closeAuthModal}

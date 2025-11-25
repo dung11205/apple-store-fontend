@@ -20,7 +20,11 @@ export default function AdminProducts() {
     stock: "",
     images: [],
     description: "",
+    category: "",
   });
+
+  // Danh sách category từ navbar
+  const categories = ["Apple", "Mac", "iPad", "iPhone", "Watch", "AirPods", "Phụ Kiện"];
 
   useEffect(() => {
     fetchProducts();
@@ -74,7 +78,7 @@ export default function AdminProducts() {
   };
 
   const handleSubmit = async () => {
-    if (!formData.name || !formData.price) return;
+    if (!formData.name || !formData.price || !formData.category) return;
     setLoadingAction(true);
 
     try {
@@ -84,6 +88,7 @@ export default function AdminProducts() {
       fd.append("price", formData.price);
       fd.append("stock", formData.stock || 0);
       fd.append("description", formData.description);
+      fd.append("category", formData.category);
       if (formData.images.length > 0) {
         Array.from(formData.images).forEach((file) => fd.append("images", file));
       }
@@ -102,7 +107,7 @@ export default function AdminProducts() {
         setAddingProduct(false);
       }
 
-      setFormData({ name: "", price: "", stock: "", images: [], description: "" });
+      setFormData({ name: "", price: "", stock: "", images: [], description: "", category: "" });
       fetchProducts();
     } catch (err) {
       console.error(err);
@@ -112,7 +117,6 @@ export default function AdminProducts() {
     }
   };
 
-  // --- Thêm: Drag & Drop ---
   const handleDragEnd = async (result) => {
     if (!result.destination) return;
 
@@ -122,12 +126,11 @@ export default function AdminProducts() {
 
     setProducts(reordered);
 
-    // Gửi thứ tự mới lên server (tùy backend)
     try {
       const token = getToken();
       await axios.put(
         "http://localhost:3000/api/products/reorder",
-        { productIds: reordered.map(p => p._id) },
+        { productIds: reordered.map((p) => p._id) },
         { headers: { Authorization: `Bearer ${token}` } }
       );
     } catch (err) {
@@ -165,6 +168,7 @@ export default function AdminProducts() {
                 <th>Ảnh</th>
                 <th>Tên sản phẩm</th>
                 <th>Mô tả</th>
+                <th>Danh mục</th>
                 <th>Giá</th>
                 <th>Số lượng</th>
                 <th>Ngày tạo</th>
@@ -190,20 +194,25 @@ export default function AdminProducts() {
                           <td>{product.images?.[0] && <img src={product.images[0]} alt={product.name} />}</td>
                           <td>{product.name || "—"}</td>
                           <td>{product.description || "—"}</td>
+                          <td>{product.category || "—"}</td>
                           <td>{product.price?.toLocaleString("vi-VN") || "—"}₫</td>
                           <td>{product.stock || 0}</td>
                           <td>{new Date(product.createdAt).toLocaleDateString("vi-VN")}</td>
                           <td>
-                            <button className="btn-edit" onClick={() => {
-                              setEditingProduct(product);
-                              setFormData({
-                                name: product.name,
-                                price: product.price,
-                                stock: product.stock,
-                                images: [],
-                                description: product.description || "",
-                              });
-                            }}>
+                            <button
+                              className="btn-edit"
+                              onClick={() => {
+                                setEditingProduct(product);
+                                setFormData({
+                                  name: product.name,
+                                  price: product.price,
+                                  stock: product.stock,
+                                  images: [],
+                                  description: product.description || "",
+                                  category: product.category || "",
+                                });
+                              }}
+                            >
                               <FiEdit2 />
                             </button>
                             <button className="btn-delete" onClick={() => handleDeleteProduct(product._id)}>
@@ -217,7 +226,7 @@ export default function AdminProducts() {
                   {provided.placeholder}
                   {products.length === 0 && (
                     <tr>
-                      <td colSpan="8" style={{ textAlign: "center", padding: "2rem" }}>
+                      <td colSpan="9" style={{ textAlign: "center", padding: "2rem" }}>
                         <FiPlus style={{ fontSize: "3rem", opacity: 0.5 }} />
                         <div>Chưa có sản phẩm nào.</div>
                       </td>
@@ -249,6 +258,12 @@ export default function AdminProducts() {
               onChange={handleFormChange}
               rows={3}
             />
+            <select name="category" value={formData.category} onChange={handleFormChange}>
+              <option value="">Chọn danh mục</option>
+              {categories.map((cat) => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
             <input
               type="number"
               name="price"

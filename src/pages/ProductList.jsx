@@ -2,6 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import { ShoppingCart } from "lucide-react";
 import { getProducts } from "../api/productApi";
 import { CartContext } from "../context/CartContext";
+import { useLocation } from "react-router-dom";   // thêm dòng này
 import styles from "./ProductList.module.css";
 
 // ===== Component ProductCard =====
@@ -24,42 +25,7 @@ function ProductCard({ product }) {
 
   const description = product.description || "Mô tả sản phẩm mặc định.";
 
-  // Animation fly to cart
-  const animateFlyToCart = (event) => {
-    const cartIcon = document.querySelector(".nav-cart-icon");
-    if (!cartIcon) return;
-
-    const productImage = event.target.closest("." + styles.productCard).querySelector("img");
-    if (!productImage) return;
-
-    const imgClone = productImage.cloneNode();
-    const rect = productImage.getBoundingClientRect();
-
-    imgClone.style.position = "fixed";
-    imgClone.style.left = rect.left + "px";
-    imgClone.style.top = rect.top + "px";
-    imgClone.style.width = rect.width + "px";
-    imgClone.style.height = rect.height + "px";
-    imgClone.style.transition = "all 0.8s ease";
-    imgClone.style.zIndex = 9999;
-    imgClone.style.borderRadius = "12px";
-
-    document.body.appendChild(imgClone);
-
-    const cartRect = cartIcon.getBoundingClientRect();
-
-    setTimeout(() => {
-      imgClone.style.left = cartRect.left + "px";
-      imgClone.style.top = cartRect.top + "px";
-      imgClone.style.width = "20px";
-      imgClone.style.height = "20px";
-      imgClone.style.opacity = 0.3;
-    }, 50);
-
-    setTimeout(() => imgClone.remove(), 900);
-  };
-
-  const handleAddToCart = (e) => {
+  const handleAddToCart = () => {
     const prodId = product._id || product.id;
     if (!prodId) {
       console.error("Sản phẩm chưa có id!");
@@ -89,7 +55,6 @@ function ProductCard({ product }) {
     }
 
     updateCart(newCart);
-    animateFlyToCart(e);
   };
 
   return (
@@ -101,16 +66,6 @@ function ProductCard({ product }) {
           onError={handleImageError}
           className={styles.productImage}
         />
-      </div>
-
-      <div className={styles.colorOptions}>
-        {(product.colors || ["#A5D6FF", "#F8C8DC", "#000000"]).map((color, index) => (
-          <div
-            key={index}
-            className={`${styles.colorDot} ${index === 2 ? styles.selectedColor : ""}`}
-            style={{ backgroundColor: color }}
-          />
-        ))}
       </div>
 
       <div className={styles.content}>
@@ -137,11 +92,16 @@ export default function ProductList() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+  const category = query.get("category"); // ✅ lấy category từ URL
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const res = await getProducts();
+        // ✅ truyền category vào API nếu có
+        const res = await getProducts(category ? { category } : {});
         setProducts(res.data.data);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -150,7 +110,7 @@ export default function ProductList() {
       }
     };
     fetchProducts();
-  }, []);
+  }, [category]); // khi category thay đổi thì gọi lại API
 
   if (loading) {
     return (
